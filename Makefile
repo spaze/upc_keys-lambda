@@ -1,7 +1,7 @@
 all: build zip
 
 build:
-	gcc -static -O2 -o upc_keys upc_keys.c -lcrypto
+	gcc -static -O3 -o upc_keys upc_keys.c -lcrypto
 
 zip:
 	chmod +x index.js
