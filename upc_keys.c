@@ -129,7 +129,8 @@ int main(int argc, char *argv[])
 	char *prefixes[] = {
 		"SAAP",
 		"SAPP",
-		"UAAP"
+		"UAAP",
+		"SBAP"
 	};
 
 	if(argc != 2) {
