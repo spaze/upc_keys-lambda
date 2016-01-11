@@ -3,7 +3,7 @@ API Gateway Resources GET method
 
 Method Request
 --------------
-Add `ssid` to *URL Query String Params*, or create new Resource with *Resource Path* containing `{ssid}` path parameter.
+Add `ssid` and `prefixes` to *URL Query String Params*, or create new Resource with *Resource Path* containing both `{ssid}` and `{prefixes}` path parameter.
 
 **Do not** forget to set *API Key Required* to `true`.
 
@@ -12,7 +12,8 @@ Integration Request
 Add following *Mapping Template* for `application/json`:
 ```
 {
-    "ssid": "$input.params('ssid')"
+    "ssid": "$input.params('ssid')",
+    "prefixes": "$input.params('prefixes')"
 }
 ```
 

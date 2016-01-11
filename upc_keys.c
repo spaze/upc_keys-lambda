@@ -72,6 +72,8 @@
 #define MAX2 9
 #define MAX3 9999
 
+#define PREFIX_DELIMITER ","
+
 void hash2pass(uint8_t *in_hash, char *out_pass)
 {
 	uint32_t i, a;
@@ -113,8 +115,9 @@ uint32_t upc_generate_ssid(uint32_t* data, uint32_t magic)
 
 void usage(char *prog)
 {
-	fprintf(stderr, "  Usage: %s <ESSID>\n", prog);
-	fprintf(stderr, "   - ESSID should be in 'UPCxxxxxxx' format\n\n");
+	fprintf(stderr, "  Usage: %s <ESSID> <PREFIXES>\n", prog);
+	fprintf(stderr, "   - ESSID should be in 'UPCxxxxxxx' format\n");
+	fprintf(stderr, "   - PREFIXES should be a string of comma separated serial number prefixes\n\n");
 }
 
 int main(int argc, char *argv[])
@@ -126,14 +129,9 @@ int main(int argc, char *argv[])
 	uint8_t h1[16], h2[16];
 	uint32_t hv[4], w1, w2, i, j;
 	int mode, prefix_cnt;
-	char *prefixes[] = {
-		"SAAP",
-		"SAPP",
-		"UAAP",
-		"SBAP"
-	};
+	char *prefix;
 
-	if(argc != 2) {
+	if(argc != 3) {
 		usage(argv[0]);
 		return 1;
 	}
@@ -143,6 +141,7 @@ int main(int argc, char *argv[])
 		return 1;
 	}
 
+	char prefixes[strlen(argv[2]) + 1];
 	target = strtoul(argv[1] + 3, NULL, 0);
 
 	MD5_CTX ctx;
@@ -162,9 +161,10 @@ int main(int argc, char *argv[])
 			continue;
 		}
 
-		prefix_cnt = sizeof(prefixes) / sizeof(prefixes[0]);
-		for(j = 0; j < prefix_cnt; j++) {
-			sprintf(serial, "%s%d%02d%d%04d", prefixes[j], buf[0], buf[1], buf[2], buf[3]);
+		strcpy(prefixes, argv[2]);
+		prefix = strtok(prefixes, PREFIX_DELIMITER);
+		while (prefix != NULL) {
+			sprintf(serial, "%s%d%02d%d%04d", prefix, buf[0], buf[1], buf[2], buf[3]);
 			memset(serial_input, 0, 64);
 
 			if (mode == 2) {
@@ -199,6 +199,7 @@ int main(int argc, char *argv[])
 
 			hash2pass(h2, pass);
 			printf("%s,%s,%d\n", serial, pass, mode);
+			prefix = strtok(NULL, PREFIX_DELIMITER);
 		}
 	}
 
