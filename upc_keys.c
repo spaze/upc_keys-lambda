@@ -111,8 +111,13 @@ int main(int argc, char *argv[])
 	char serial_input[64];
 	char pass[9], tmpstr[17];
 	uint8_t h1[16], h2[16];
-	uint32_t hv[4], w1, w2, i;
-	int mode;
+	uint32_t hv[4], w1, w2, i, j;
+	int mode, prefix_cnt;
+	char *prefixes[] = {
+		"SAAP",
+		"SAPP",
+		"UAAP"
+	};
 
 	if(argc != 2) {
 		usage(argv[0]);
@@ -143,41 +148,44 @@ int main(int argc, char *argv[])
 			continue;
 		}
 
-		sprintf(serial, "SAAP%d%02d%d%04d", buf[0], buf[1], buf[2], buf[3]);
-		memset(serial_input, 0, 64);
+		prefix_cnt = sizeof(prefixes) / sizeof(prefixes[0]);
+		for(j = 0; j < prefix_cnt; j++) {
+			sprintf(serial, "%s%d%02d%d%04d", prefixes[j], buf[0], buf[1], buf[2], buf[3]);
+			memset(serial_input, 0, 64);
 
-		if (mode == 2) {
-			for(i=0; i<strlen(serial); i++) {
-				serial_input[strlen(serial)-1-i] = serial[i];
+			if (mode == 2) {
+				for(i=0; i<strlen(serial); i++) {
+					serial_input[strlen(serial)-1-i] = serial[i];
+				}
+			} else {
+				memcpy(serial_input, serial, strlen(serial));
 			}
-		} else {
-			memcpy(serial_input, serial, strlen(serial));
+
+			MD5_Init(&ctx);
+			MD5_Update(&ctx, serial_input, strlen(serial_input));
+			MD5_Final(h1, &ctx);
+
+			for (i = 0; i < 4; i++) {
+				hv[i] = *(uint16_t *)(h1 + i*2);
+			}
+
+			w1 = mangle(hv);
+
+			for (i = 0; i < 4; i++) {
+				hv[i] = *(uint16_t *)(h1 + 8 + i*2);
+			}
+
+			w2 = mangle(hv);
+
+			sprintf(tmpstr, "%08X%08X", w1, w2);
+
+			MD5_Init(&ctx);
+			MD5_Update(&ctx, tmpstr, strlen(tmpstr));
+			MD5_Final(h2, &ctx);
+
+			hash2pass(h2, pass);
+			printf("%s,%s,%d\n", serial, pass, mode);
 		}
-
-		MD5_Init(&ctx);
-		MD5_Update(&ctx, serial_input, strlen(serial_input));
-		MD5_Final(h1, &ctx);
-
-		for (i = 0; i < 4; i++) {
-			hv[i] = *(uint16_t *)(h1 + i*2);
-		}
-
-		w1 = mangle(hv);
-
-		for (i = 0; i < 4; i++) {
-			hv[i] = *(uint16_t *)(h1 + 8 + i*2);
-		}
-
-		w2 = mangle(hv);
-
-		sprintf(tmpstr, "%08X%08X", w1, w2);
-
-		MD5_Init(&ctx);
-		MD5_Update(&ctx, tmpstr, strlen(tmpstr));
-		MD5_Final(h2, &ctx);
-
-		hash2pass(h2, pass);
-		printf("%s,%s,%d\n", serial, pass, mode);
 	}
 
 	return 0;
