@@ -1,4 +1,17 @@
 /*
+ * ----------------------------------------------------------------------------
+ * "THE BLASTY-WAREZ LICENSE" (Revision 1):
+ * <peter@haxx.in> wrote this file. As long as you retain this notice and don't
+ * sell my work you can do whatever you want with this stuff. If we meet some 
+ * day, and you think this stuff is worth it, you can intoxicate me in return.
+ * ----------------------------------------------------------------------------
+ */
+/* ------------------------------------------------------------------
+ * Michal Špaček <mail@michalspacek.cz> has modified this file,
+ * "THE BLASTY-WAREZ LICENSE" still applies. See Git log for changes.
+ * ------------------------------------------------------------------
+ */
+/*
  * upc_keys.c -- WPA2 passphrase recovery tool for UPC%07d devices
  * ===============================================================
  * You'd think vendors would stop using weak algorithms that allow
