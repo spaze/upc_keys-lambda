@@ -19,4 +19,4 @@ Add following *Mapping Template* for `application/json`:
 
 Integration Response
 --------------------
-Add new *Method response status* `500`, use *Lambda Error Regex* `Task timed out.*`.
+Add new *Method response status* `500`, use *Lambda Error Regex* `.*Task timed out.*`.
