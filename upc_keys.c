@@ -117,7 +117,8 @@ void usage(char *prog)
 {
 	fprintf(stderr, "  Usage: %s <ESSID> <PREFIXES>\n", prog);
 	fprintf(stderr, "   - ESSID should be in 'UPCxxxxxxx' format\n");
-	fprintf(stderr, "   - PREFIXES should be a string of comma separated serial number prefixes\n\n");
+	fprintf(stderr, "   - PREFIXES should be a string of comma separated serial number prefixes\n");
+	fprintf(stderr, "   - Technicolor TC7200 (SAAP, SAPP, SBAP), Ubee EVW3226 (UAAP)\n\n");
 }
 
 int main(int argc, char *argv[])
